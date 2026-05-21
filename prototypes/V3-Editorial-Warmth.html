@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CaloScanAi — Editorial Warmth</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&family=Noto+Sans+TC:wght@300;400&display=swap');
+
+    :root {
+      --bg: #f4efe8;
+      --surface: #faf7f3;
+      --ink: #1c1917;
+      --ink-light: #6b6560;
+      --accent: #c45c3a;
+      --accent-light: #e8d5cc;
+      --border: #ddd6ce;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', 'Noto Sans TC', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+    }
+
+    .hero {
+      padding: 80px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 1px;
+      height: 100%;
+      background: var(--border);
+    }
+
+    .eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--accent);
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 72px;
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 32px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--ink-light);
+      max-width: 420px;
+      font-weight: 300;
+    }
+
+    .stat-bar {
+      margin-top: auto;
+      padding-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .stat-item {
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .stat-item .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 40px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .stat-item .label {
+      font-size: 11px;
+      color: var(--ink-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .form-panel {
+      padding: 80px 56px;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-panel h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .form-panel .sub {
+      font-size: 13px;
+      color: var(--ink-light);
+      margin-bottom: 36px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--ink-light);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      border-radius: 2px;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+      border-radius: 2px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-light);
+    }
+
+    .form-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .section-tag {
+      position: fixed;
+      top: 40px;
+      left: 40px;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .hero { padding: 60px 32px; }
+      .hero h1 { font-size: 48px; }
+      .stat-bar { grid-template-columns: 1fr 1fr; }
+      .form-panel { padding: 60px 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="eyebrow">AI Calorie Tracker · Since 2026</div>
+    <h1>每一口<br>都值得<em>被看見</em></h1>
+    <p>用相機記錄飲食，AI 即時分析熱量。從今天開始，用數據理解自己的身體。</p>
+
+    <div class="stat-bar">
+      <div class="stat-item">
+        <div class="num">365</div>
+        <div class="label">每日鼓勵語錄</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">< 2s</div>
+        <div class="label">AI 熱量分析</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">100%</div>
+        <div class="label">本地隱私保護</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <h2>登入帳號</h2>
+    <p class="sub">還沒有帳號？<a href="#">立即註冊</a></p>
+
+    <div class="form-group">
+      <label>電子郵件</label>
+      <input type="email" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label>密碼</label>
+      <input type="password" placeholder="輸入密碼">
+    </div>
+
+    <button class="btn-primary">登 入</button>
+    <div class="form-footer">
+      <a href="#">忘記密碼？</a>
+    </div>
+  </div>
+
+  <div class="section-tag">CaloScanAi / 飲食追蹤系統</div>
+</body>
+</html>

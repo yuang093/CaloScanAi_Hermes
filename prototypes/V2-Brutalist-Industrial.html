@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CaloScanAi — Brutalist Industrial</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;700&display=swap');
+
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --ink: #f0f0f0;
+      --ink-muted: #888;
+      --accent: #e8ff3c;
+      --accent2: #ff3c3c;
+      --border: #333;
+      --radius: 2px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans TC', 'Space Mono', monospace;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .left {
+      padding: 80px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 3px solid var(--accent);
+      position: relative;
+    }
+
+    .left::before {
+      content: 'CALOSCAN.AI';
+      position: absolute;
+      top: 40px;
+      left: 60px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--ink-muted);
+    }
+
+    .left h1 {
+      font-size: clamp(56px, 6vw, 96px);
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      margin-top: 60px;
+    }
+
+    .left h1 .accent { color: var(--accent); }
+
+    .left .tagline {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--ink-muted);
+      max-width: 360px;
+      border-left: 3px solid var(--accent);
+      padding-left: 20px;
+      margin-top: 40px;
+    }
+
+    .left .meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-muted);
+      letter-spacing: 0.2em;
+    }
+
+    .right {
+      padding: 80px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      color: var(--ink-muted);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .form-title::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--ink-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 0;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+      color: var(--ink);
+      font-size: 16px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-bottom-color: var(--accent);
+    }
+
+    .form-group input::placeholder {
+      color: #444;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+
+    .btn-primary:hover {
+      background: #fff;
+    }
+
+    .links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+    }
+
+    .links a {
+      font-size: 11px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+
+    .links a:hover { color: var(--accent); }
+
+    .corner-tag {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: #333;
+      transform: rotate(-90deg);
+      transform-origin: right bottom;
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .left { border-right: none; border-bottom: 3px solid var(--accent); padding: 60px 32px; }
+      .left h1 { font-size: 48px; }
+      .right { padding: 60px 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div></div>
+    <div>
+      <h1>CALO<br><span class="accent">SCAN</span><br>AI</h1>
+      <p class="tagline">用鏡頭看見熱量。<br>人工智慧 × 飲食追蹤。<br>每一天，都是數據。</p>
+    </div>
+    <div class="meta">V 0.1.0 — SYSTEM ONLINE</div>
+  </div>
+
+  <div class="right">
+    <div class="form-title">AUTH / LOGIN</div>
+
+    <div class="form-group">
+      <label>EMAIL</label>
+      <input type="email" placeholder="user@domain.com">
+    </div>
+    <div class="form-group">
+      <label>PASSWORD</label>
+      <input type="password" placeholder="••••••••">
+    </div>
+
+    <button class="btn-primary">→ ENTER</button>
+
+    <div class="links">
+      <a href="#">FORGOT PW</a>
+      <a href="#">CREATE ACCOUNT →</a>
+    </div>
+  </div>
+
+  <div class="corner-tag">CALORIE TRACKING SYSTEM / CALOSCAN.AI / 2026</div>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>優先序決策器 — CaloScanAi</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg: #f0f2f5;
+      --surface: #ffffff;
+      --ink: #1a1d23;
+      --ink-muted: #6b7280;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --green: #22c55e;
+      --border: #e2e5ea;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .header p {
+      color: var(--ink-muted);
+      font-size: 14px;
+    }
+
+    .header .sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-top: 12px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .column {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 400px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .column.red { border-top: 3px solid var(--red); }
+    .column.yellow { border-top: 3px solid var(--yellow); }
+    .column.green { border-top: 3px solid var(--green); }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .col-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .col-dot.red { background: var(--red); }
+    .col-dot.yellow { background: var(--yellow); }
+    .col-dot.green { background: var(--green); }
+
+    .col-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .col-count {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-muted);
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 300px;
+    }
+
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: grab;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+
+    .card.dragging {
+      opacity: 0.5;
+      transform: rotate(2deg);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .card-tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 2px 8px;
+      border-radius: 100px;
+      text-transform: uppercase;
+    }
+
+    .card-tag.design { background: #fce7f3; color: #be185d; }
+    .card-tag.tech { background: #dbeafe; color: #1d4ed8; }
+    .card-tag.research { background: #d1fae5; color: #065f46; }
+    .card-tag.biz { background: #fef3c7; color: #92400e; }
+    .card-tag.ops { background: #f3e8ff; color: #7c3aed; }
+
+    .card-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ink-muted);
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .submit-area {
+      max-width: 1200px;
+      margin: 32px auto 0;
+      text-align: center;
+    }
+
+    .submit-btn {
+      background: var(--ink);
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .submit-btn:hover {
+      background: #2d2f36;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .output {
+      max-width: 1200px;
+      margin: 24px auto;
+      display: none;
+    }
+
+    .output.show { display: block; }
+
+    .output-box {
+      background: #1a1d23;
+      color: #e8eaf0;
+      border-radius: 16px;
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .output-box .label {
+      color: #f59e0b;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      margin-bottom: 12px;
+    }
+
+    /* Drop zone highlight */
+    .column.drag-over {
+      background: #f8fafc;
+      box-shadow: 0 0 0 2px var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚡ 優先序決策器</h1>
+    <p>拖曳卡片到三個優先序區塊，調整完成後按「提交」產生 Prompt</p>
+    <div class="sub">CALOSCAN.AI TASK BOARD</div>
+  </div>
+
+  <div class="board">
+    <!-- 🔴 第一優先 -->
+    <div class="column red" data-priority="p1">
+      <div class="col-header">
+        <div class="col-dot red"></div>
+        <div class="col-title">🔴 第一優先</div>
+        <div class="col-count" id="count-p1">0</div>
+      </div>
+      <div class="cards" data-priority="p1" id="cards-p1"></div>
+    </div>
+
+    <!-- 🟡 第二優先 -->
+    <div class="column yellow" data-priority="p2">
+      <div class="col-header">
+        <div class="col-dot yellow"></div>
+        <div class="col-title">🟡 第二優先</div>
+        <div class="col-count" id="count-p2">0</div>
+      </div>
+      <div class="cards" data-priority="p2" id="cards-p2"></div>
+    </div>
+
+    <!-- 🟢 第三優先 -->
+    <div class="column green" data-priority="p3">
+      <div class="col-header">
+        <div class="col-dot green"></div>
+        <div class="col-title">🟢 第三優先</div>
+        <div class="col-count" id="count-p3">0</div>
+      </div>
+      <div class="cards" data-priority="p3" id="cards-p3"></div>
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button class="submit-btn" onclick="generatePrompt()">📋 提交並產生 Prompt</button>
+  </div>
+
+  <div class="output" id="output">
+    <div class="output-box">
+      <div class="label">// GENERATED PROMPT</div>
+      <span id="prompt-text"></span>
+    </div>
+  </div>
+
+  <script>
+    // 初始任務（來自 CaloScanAi 優先序清單）
+    const allTasks = [
+      // P1
+      { id: 'P1-1', tag: 'design',    title: '產出 6 種 UI/UX 原型提案' },
+      { id: 'P1-2', tag: 'tech',      title: '建立 Vercel HTML 專案（優先序決策器）' },
+      { id: 'P1-3', tag: 'research',  title: 'AI 生成使用者調查問卷' },
+      // P2
+      { id: 'P2-1', tag: 'tech',      title: '串接 MiniMax AI 分析食物照片' },
+      { id: 'P2-2', tag: 'research',  title: '分析資料庫備份策略' },
+      { id: 'P2-3', tag: 'tech',      title: '實作條碼掃描與字典檔搜尋' },
+      { id: 'P2-4', tag: 'tech',      title: '實作影像壓縮模組' },
+      // P3
+      { id: 'P3-1', tag: 'tech',      title: '匯入 365 鼓勵語錄 + 首頁輪播' },
+      { id: 'P3-2', tag: 'biz',       title: '實作斗內（Donation）按鈕' },
+      { id: 'P3-3', tag: 'tech',      title: '實作後台儀表板' },
+      { id: 'P3-4', tag: 'tech',      title: '實作深色/亮色模式切換' },
+      { id: 'P3-5', tag: 'tech',      title: '實作帳號管理' },
+      { id: 'P3-6', tag: 'tech',      title: '實作資料庫備份/還原機制' },
+      { id: 'P3-7', tag: 'ops',       title: '寫 README.md' },
+    ];
+
+    // 預設分配
+    const priorityMap = {
+      'P1-1': 'p1', 'P1-2': 'p1', 'P1-3': 'p1',
+      'P2-1': 'p2', 'P2-2': 'p2', 'P2-3': 'p2', 'P2-4': 'p2',
+      'P3-1': 'p3', 'P3-2': 'p3', 'P3-3': 'p3', 'P3-4': 'p3', 'P3-5': 'p3', 'P3-6': 'p3', 'P3-7': 'p3',
+    };
+
+    function makeCard(task) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.dataset.id = task.id;
+      div.draggable = true;
+      div.innerHTML = `
+        <div class="card-header">
+          <span class="card-tag ${task.tag}">${task.tag.toUpperCase()}</span>
+          <span class="card-id">#${task.id}</span>
+        </div>
+        <div class="card-title">${task.title}</div>
+      `;
+      return div;
+    }
+
+    function render() {
+      const cols = { p1: [], p2: [], p3: [] };
+      allTasks.forEach(t => {
+        const p = priorityMap[t.id];
+        cols[p].push(makeCard(t));
+      });
+
+      ['p1','p2','p3'].forEach(p => {
+        const el = document.getElementById(`cards-${p}`);
+        el.innerHTML = '';
+        cols[p].forEach(c => el.appendChild(c));
+        document.getElementById(`count-${p}`).textContent = cols[p].length;
+      });
+
+      attachDragListeners();
+    }
+
+    function attachDragListeners() {
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', card.dataset.id);
+          card.classList.add('dragging');
+        });
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          document.querySelectorAll('.column').forEach(c => c.classList.remove('drag-over'));
+        });
+      });
+
+      document.querySelectorAll('.cards').forEach(col => {
+        col.addEventListener('dragover', e => {
+          e.preventDefault();
+          col.parentElement.classList.add('drag-over');
+        });
+        col.addEventListener('dragleave', () => {
+          col.parentElement.classList.remove('drag-over');
+        });
+        col.addEventListener('drop', e => {
+          e.preventDefault();
+          col.parentElement.classList.remove('drag-over');
+          const id = e.dataTransfer.getData('text/plain');
+          const newPriority = col.dataset.priority;
+          priorityMap[id] = newPriority;
+          render();
+        });
+      });
+    }
+
+    function generatePrompt() {
+      const byP = { p1: [], p2: [], p3: [] };
+      allTasks.forEach(t => byP[priorityMap[t.id]].push(t));
+
+      const fmt = (tasks, label) => tasks.length
+        ? `【${label}】\n${tasks.map(t => `  ${t.id}. ${t.title}`).join('\n')}`
+        : '';
+
+      const prompt = `以下是我對 CaloScanAi 專案的最新優先序安排，請根據這個順序執行任務：
+
+🔴 第一優先（最高優先）：
+${fmt(byP.p1, 'P1')}
+
+🟡 第二優先（重要但非緊急）：
+${fmt(byP.p2, 'P2')}
+
+🟢 第三優先（可稍後處理）：
+${fmt(byP.p3, 'P3')}
+
+請依序完成以上任務，完成後向我報告進度。`;
+
+      document.getElementById('prompt-text').textContent = prompt;
+      document.getElementById('output').classList.add('show');
+    }
+
+    render();
+  </script>
+</body>
+</html>

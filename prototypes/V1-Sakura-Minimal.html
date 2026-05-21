@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CaloScanAi — Sakura Minimal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Zen+Maru+Gothic:wght@300;400;500&display=swap');
+
+    :root {
+      --bg: #faf8f5;
+      --surface: #ffffff;
+      --ink: #2d2a26;
+      --ink-muted: #8a8279;
+      --accent: #c97d8e;
+      --accent-light: #f3e8ec;
+      --border: #e8e2db;
+      --radius: 16px;
+      --shadow: 0 8px 40px rgba(45,42,38,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Zen Maru Gothic', 'Noto Serif TC', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .scene {
+      display: flex;
+      gap: 80px;
+      align-items: center;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .brand {
+      flex: 1;
+    }
+
+    .brand-mark {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f8c8d4, #e8a0b0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 24px rgba(201,125,142,0.25);
+    }
+
+    .brand-mark svg { width: 36px; height: 36px; }
+
+    .brand h1 {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .brand h1 span {
+      display: block;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: var(--ink-muted);
+      margin-top: 8px;
+    }
+
+    .brand p {
+      font-size: 15px;
+      color: var(--ink-muted);
+      line-height: 1.8;
+      max-width: 320px;
+    }
+
+    .card {
+      flex: 1;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 48px 44px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      max-width: 420px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 14px;
+      color: var(--ink-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .tab.active {
+      color: var(--ink);
+      border-bottom-color: var(--accent);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: var(--ink-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #d4899c, #c97d8e);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(201,125,142,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(201,125,142,0.4);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+      color: var(--ink-muted);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .oauth-btn {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--ink);
+      transition: all 0.2s;
+    }
+
+    .oauth-btn:hover {
+      background: var(--bg);
+      border-color: var(--ink-muted);
+    }
+
+    .illustration {
+      position: absolute;
+      right: -60px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.06;
+      font-size: 280px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .scene { flex-direction: column; gap: 40px; }
+      .brand { text-align: center; }
+      .brand p { margin: 0 auto; }
+      .card { width: 100%; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="10" stroke="#fff" stroke-width="2"/>
+          <path d="M18 8 C12 14, 12 22, 18 28 C24 22, 24 14, 18 8Z" fill="#fff" opacity="0.6"/>
+          <circle cx="18" cy="18" r="3" fill="#fff"/>
+        </svg>
+      </div>
+      <h1>CaloScan<span>AI</span><span>C A L O R I E  T R A C K E R</span></h1>
+      <p>用 AI 攝影鏡頭，瞬間看懂每一口的熱量。優雅、簡單、每一天。</p>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active">登入</div>
+        <div class="tab">註冊</div>
+      </div>
+
+      <div class="form-group">
+        <label>電子郵件</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>密碼</label>
+        <input type="password" placeholder="••••••••">
+      </div>
+      <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+        <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-muted); cursor: pointer;">
+          <input type="checkbox" style="accent-color: var(--accent);"> 記住我
+        </label>
+        <a href="#" style="font-size: 13px; color: var(--accent); text-decoration: none;">忘記密碼？</a>
+      </div>
+      <button class="btn-primary">登 入</button>
+
+      <div class="divider">或</div>
+
+      <button class="oauth-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" fill="currentColor"/></svg>
+        透過 Google 登入
+      </button>
+    </div>
+  </div>
+</body>
+</html>

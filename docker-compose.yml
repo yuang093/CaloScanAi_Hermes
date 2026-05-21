@@ -1,0 +1,67 @@
+services:
+  caloscan_backend:
+    build: ./backend
+    container_name: caloscan_backend
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://caloscan:caloscan_secure_pass@caloscan_postgres:5432/caloscan
+      - SECRET_KEY=${SECRET_KEY}
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY}
+      - UPLOAD_DIR=/app/uploads
+    volumes:
+      - ./volumes/uploads:/app/uploads
+    depends_on:
+      caloscan_postgres:
+        condition: service_healthy
+    networks:
+      - caloscan_net
+
+  # caloscan_frontend:
+  #   build: ./frontend
+  #   container_name: caloscan_frontend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3002:3000"
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=http://caloscan_backend:8000
+  #   depends_on:
+  #     - caloscan_backend
+  #   networks:
+  #     - caloscan_net
+
+  caloscan_postgres:
+    image: postgres:16-alpine
+    container_name: caloscan_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=caloscan
+      - POSTGRES_PASSWORD=caloscan_secure_pass
+      - POSTGRES_DB=caloscan
+    volumes:
+      - ./volumes/pg_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U caloscan -d caloscan"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - caloscan_net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: caloscan_cloudflared
+    restart: unless-stopped
+    command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    # Cloudflare Tunnel 只透過 token 連線，不需要 depends_on
+    # 只要在同個 network 就能解析 caloscan_frontend / caloscan_backend
+    networks:
+      - caloscan_net
+
+networks:
+  caloscan_net:
+    driver: bridge
