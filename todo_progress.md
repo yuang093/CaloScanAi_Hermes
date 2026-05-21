@@ -12,9 +12,9 @@
 - [x] 建立 Docker Compose 部署架構（backend + frontend + postgres + cloudflared）
 - [x] 建立資料庫 Schema（Users, FoodLogs, BarcodeDictionary, DailyQuotes）
 - [x] 實作會員登入/註冊機制（JWT, bcrypt）
-- [ ] 建立 Vercel HTML 專案，用於與 AI 溝通（優先序決策器已完成）
-- [ ] 產出 6 種版本提案供選擇（UI/UX 原型）。
-- [ ] 使用 AI 生成使用者調查問卷以萃取核心功能。
+- [x] 建立 Vercel HTML 專案，用於與 AI 溝通（優先序決策器已完成）
+- [x] 產出 6 種版本提案供選擇（UI/UX 原型）。
+- [x] 使用 AI 生成使用者調查問卷以萃取核心功能。
 
 ## 階段二：核心功能與 AI 辨識
 - [ ] 實作會員登入/註冊機制。
