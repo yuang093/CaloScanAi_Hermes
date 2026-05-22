@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     email       VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role        VARCHAR(10) NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user')),
+    preferred_style VARCHAR(10),
     daily_calorie_limit INTEGER NOT NULL DEFAULT 2000,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()

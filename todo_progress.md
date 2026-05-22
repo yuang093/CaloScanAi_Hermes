@@ -30,6 +30,6 @@
 - [ ] 實作資料庫手動/自動備份、還原、下載 API（需配合 cron）。
 
 ## 階段四：UI/UX 完善
-- [ ] 實作深色/亮色模式切換。
-- [ ] 匯入 365 句鼓勵語錄至資料庫並實作首頁輪播。
-- [ ] 實作斗內 (Donation) 按鈕。
+- [x] 實作深色/亮色模式切換 — `frontend/src/styles/theme.css` + `utils/theme.js`。
+- [x] 匯入 365 句鼓勵語錄至資料庫並實作首頁輪播 — `init-db.sql` 已有語錄，`DailyQuote.jsx` 完成。
+- [x] 實作斗內 (Donation) 按鈕 — `DonationButton.jsx`（Ko-fi + Buy Me a Coffee，浮動+內嵌）。
