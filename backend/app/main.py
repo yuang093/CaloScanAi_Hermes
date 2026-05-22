@@ -18,6 +18,7 @@ import base64 as _base64
 
 from .services.vision import analyze_food_image
 from .services.auth import get_password_hash, verify_password, create_access_token, decode_token
+from .api.backup import router as backup_router
 
 settings = get_settings()
 security = HTTPBearer()
@@ -34,6 +35,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="CaloScanAi API", version="1.0.0", lifespan=lifespan)
+
+app.include_router(backup_router)
 
 app.add_middleware(
     CORSMiddleware,
