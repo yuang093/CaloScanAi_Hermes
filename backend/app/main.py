@@ -14,6 +14,9 @@ from .models.food_log import FoodLog
 from .models.barcode import BarcodeDictionary, DailyQuote
 from .schemas.user import UserCreate, UserLogin, UserResponse, TokenResponse
 from .schemas.food_log import FoodLogCreate, FoodLogResponse
+import base64 as _base64
+
+from .services.vision import analyze_food_image
 from .services.auth import get_password_hash, verify_password, create_access_token, decode_token
 
 settings = get_settings()
