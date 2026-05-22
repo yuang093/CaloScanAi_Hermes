@@ -303,9 +303,39 @@
 
 .logSource {
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 99px;
   padding: 0.15rem 0.6rem;
+}
+
+/* ── Top bar ──────────────────────────────────────────────── */
+.topBar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.settingsLink,
+.scanLink {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settingsLink:hover,
+.scanLink:hover,
+.adminLink:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
+  color: var(--text-primary);
 }

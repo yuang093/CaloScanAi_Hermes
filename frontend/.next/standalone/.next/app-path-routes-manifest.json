@@ -1,1 +1,1 @@
-{"/_not-found/page":"/_not-found","/(auth)/login/page":"/login","/(auth)/register/page":"/register","/dashboard/history/page":"/dashboard/history","/dashboard/page":"/dashboard","/page":"/"}
+{"/_not-found/page":"/_not-found","/(auth)/login/page":"/login","/(auth)/register/page":"/register","/admin/page":"/admin","/dashboard/page":"/dashboard","/dashboard/scan/page":"/dashboard/scan","/dashboard/settings/page":"/dashboard/settings","/page":"/","/dashboard/history/page":"/dashboard/history"}

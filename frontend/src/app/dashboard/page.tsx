@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiGet, apiPostForm, FoodLogResponse, DailySummary, AnalyzeResult } from '@/lib/api';
+import { DailyQuoteCarousel } from '@/components/DailyQuote';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
@@ -19,8 +20,22 @@ export default function DashboardPage() {
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check admin role
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        await apiGet('/api/admin/stats');
+        setIsAdmin(true);
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, []);
 
   // ── Fetch ────────────────────────────────────────────────────────────────────
   const fetchSummary = useCallback(async () => {
@@ -149,6 +164,26 @@ export default function DashboardPage() {
 
   return (
     <div className={styles.container}>
+      {/* ── 365 鼓勵語錄橫幅 ─────────────────────────────────────── */}
+      <section>
+        <DailyQuoteCarousel />
+      </section>
+
+      {/* ── 頂部操作列 ─────────────────────────────────────────── */}
+      <div className={styles.topBar}>
+        {isAdmin && (
+          <a href="/admin" className={styles.adminLink}>
+            🔧 管理員
+          </a>
+        )}
+        <a href="/dashboard/scan" className={styles.scanLink}>
+          📷 條碼掃描
+        </a>
+        <a href="/dashboard/settings" className={styles.settingsLink}>
+          ⚙️ 設定
+        </a>
+      </div>
+
       {/* ── 熱量進度條 ─────────────────────────────────────────────── */}
       <section className={styles.summaryCard}>
         <h2 className={styles.cardTitle}>今日熱量</h2>

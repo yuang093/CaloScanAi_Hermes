@@ -82,6 +82,26 @@ export async function apiPostForm<T = unknown>(
 }
 
 /**
+ * PUT 請求
+ */
+export async function apiPut<T = unknown>(
+  path: string,
+  body: unknown,
+  options?: RequestInit
+): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    body: JSON.stringify(body),
+  });
+  return parseResponse<T>(res);
+}
+
+/**
  * DELETE 請求
  */
 export async function apiDelete<T = unknown>(
@@ -131,4 +151,25 @@ export interface AnalyzeResult {
   fat_g?: number;
   confidence?: number;
   message?: string;
+}
+
+// ── Admin types ──────────────────────────────────────────────────────────────────
+
+export interface AdminStats {
+  total_users: number;
+  total_logs: number;
+  new_users_today: number;
+  logs_today: number;
+  weekly_food_logs_trend: Array<{ date: string; count: number }>;
+  weekly_new_users_trend: Array<{ date: string; count: number }>;
+  top_foods: Array<{ food_name: string; count: number }>;
+}
+
+export interface AdminUser {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  daily_calorie_limit: number;
+  created_at: string | null;
 }

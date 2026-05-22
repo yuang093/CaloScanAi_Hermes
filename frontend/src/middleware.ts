@@ -4,6 +4,9 @@ import type { NextRequest } from 'next/server';
 // 需要登入才能訪問的路徑
 const PROTECTED_PATHS = ['/dashboard', '/api/user'];
 
+// 需要管理員身份的路徑
+const ADMIN_PATHS = ['/admin'];
+
 // 登入/註冊頁面（已登入則跳過）
 const AUTH_PATHS = ['/login', '/register'];
 
@@ -23,6 +26,15 @@ export function middleware(request: NextRequest) {
 
   // 2. 訪問受保護路徑但無 token → 跳回登入
   if (PROTECTED_PATHS.some((p) => pathname.startsWith(p))) {
+    if (!token) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // 3. 訪問 admin 路徑但無 token → 跳回登入（admin 頁面自己會驗證 role）
+  if (ADMIN_PATHS.some((p) => pathname.startsWith(p))) {
     if (!token) {
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('redirect', pathname);
