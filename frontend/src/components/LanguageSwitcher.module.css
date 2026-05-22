@@ -1,0 +1,30 @@
+.switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.btn {
+  background: transparent;
+  border: none;
+  padding: 4px 10px;
+  border-radius: calc(var(--radius-md) - 2px);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s;
+}
+
+.btn:hover {
+  color: var(--color-text);
+}
+
+.active {
+  background: var(--color-primary);
+  color: #fff;
+}

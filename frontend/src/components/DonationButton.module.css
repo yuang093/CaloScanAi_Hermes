@@ -1,0 +1,125 @@
+/* ── Floating action button ──────────────────────────────── */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* ── Modal overlay ───────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.modalTitle {
+  margin: 0 0 8px;
+  color: var(--color-text);
+}
+
+.modalDesc {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+/* ── Platform buttons ────────────────────────────────────── */
+.platformList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kofiBtn,
+.bmcBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  transition: opacity 0.2s;
+}
+
+.kofiBtn:hover,
+.bmcBtn:hover {
+  opacity: 0.85;
+}
+
+.kofiBtn {
+  background: #ff5e5b;
+  color: #ffffff;
+}
+
+.bmcBtn {
+  background: #ffdd00;
+  color: #000000;
+}
+
+/* ── Later button ────────────────────────────────────────── */
+.laterBtn {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.laterBtn:hover {
+  color: var(--color-text-secondary);
+}
+
+/* ── Inline button ───────────────────────────────────────── */
+.inlineBtn {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.inlineBtn:hover {
+  background: var(--color-surface-hover);
+}

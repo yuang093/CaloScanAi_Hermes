@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiGet, apiPostForm, FoodLogResponse, DailySummary, AnalyzeResult } from '@/lib/api';
 import { DailyQuoteCarousel } from '@/components/DailyQuote';
+import DonationButton from '@/components/DonationButton';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
@@ -179,8 +180,14 @@ export default function DashboardPage() {
         <a href="/dashboard/scan" className={styles.scanLink}>
           📷 條碼掃描
         </a>
+        <a href="/dashboard/analytics" className={styles.analyticsLink}>
+          📊 分析
+        </a>
         <a href="/dashboard/settings" className={styles.settingsLink}>
           ⚙️ 設定
+        </a>
+        <a href="/feedback" className={styles.feedbackLink}>
+          💬 回饋
         </a>
       </div>
 
@@ -332,6 +339,8 @@ export default function DashboardPage() {
           </ul>
         )}
       </section>
+
+      <DonationButton />
     </div>
   );
 }

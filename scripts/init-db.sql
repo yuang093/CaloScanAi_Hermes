@@ -58,6 +58,20 @@ CREATE TABLE IF NOT EXISTS daily_quotes (
 
 CREATE INDEX IF NOT EXISTS idx_daily_quotes_used_date ON daily_quotes(used_date);
 
+-- ── Feedbacks Table ────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS feedbacks (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    rating      INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    feedback_type VARCHAR(20) NOT NULL DEFAULT 'general'
+                 CHECK (feedback_type IN ('feature', 'bug', 'general')),
+    message     TEXT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_feedbacks_user_id ON feedbacks(user_id);
+CREATE INDEX IF NOT EXISTS idx_feedbacks_created_at ON feedbacks(created_at);
+
 -- ── Admin 帳號（密碼：之後修改）────────────────────────────────────────────────
 INSERT INTO users (username, email, password_hash, role, daily_calorie_limit)
 VALUES ('admin', 'admin@caloscan.local',

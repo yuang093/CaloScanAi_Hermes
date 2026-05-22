@@ -318,7 +318,9 @@
 }
 
 .settingsLink,
-.scanLink {
+.scanLink,
+.analyticsLink,
+.feedbackLink {
   font-size: 0.875rem;
   color: var(--text-secondary);
   text-decoration: none;
@@ -334,7 +336,8 @@
 
 .settingsLink:hover,
 .scanLink:hover,
-.adminLink:hover {
+.adminLink:hover,
+.analyticsLink:hover {
   background: var(--color-surface-hover);
   border-color: var(--color-border-strong);
   color: var(--text-primary);

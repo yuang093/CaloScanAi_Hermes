@@ -1,0 +1,59 @@
+{
+  "common": {
+    "app_name": "CaloScanAi",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "no_data": "No data",
+    "language": "Language",
+    "theme": "Theme",
+    "light_mode": "Light",
+    "dark_mode": "Dark",
+    "system_mode": "System"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "scan": "Scan",
+    "history": "History",
+    "settings": "Settings",
+    "admin": "Admin",
+    "analytics": "Analytics"
+  },
+  "dashboard": {
+    "title": "Today's Calories",
+    "remaining": "Remaining",
+    "over": "Over target by",
+    "upload": "Upload Photo",
+    "dropzone_hint": "Click or drag image to upload",
+    "dropzone_formats": "Supports JPG / PNG / WEBP",
+    "analyzing": "Analyzing...",
+    "analyze": "AI Analyze",
+    "confirm_add": "Confirm Add",
+    "saved_success": "Saved to today's log",
+    "today_logs": "Today's Food Log",
+    "view_all": "View all",
+    "no_logs": "No records yet. Try uploading a food photo!",
+    "calorie_unit": "kcal"
+  },
+  "analytics": {
+    "title": "7-Day Diet Trend",
+    "calories_chart": "Daily Calories",
+    "macros_chart": "Protein / Carbs / Fat",
+    "target_line": "Calorie Target",
+    "no_data": "No data for the last 7 days"
+  },
+  "donation": {
+    "title": "Support CaloScanAi",
+    "description": "If this project helps you, consider buying me a coffee to support ongoing development and maintenance.",
+    "support_kofi": "Support on Ko-fi",
+    "support_bmc": "Support on Buy Me a Coffee",
+    "later": "Maybe later 🙏"
+  }
+}

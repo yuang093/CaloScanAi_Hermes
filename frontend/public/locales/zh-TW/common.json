@@ -1,0 +1,59 @@
+{
+  "common": {
+    "app_name": "CaloScanAi",
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "retry": "重試",
+    "save": "儲存",
+    "cancel": "取消",
+    "confirm": "確認",
+    "delete": "刪除",
+    "edit": "編輯",
+    "close": "關閉",
+    "search": "搜尋",
+    "no_data": "暫無資料",
+    "language": "語言",
+    "theme": "主題",
+    "light_mode": "淺色模式",
+    "dark_mode": "深色模式",
+    "system_mode": "跟隨系統"
+  },
+  "nav": {
+    "dashboard": "主頁",
+    "scan": "掃描",
+    "history": "歷史",
+    "settings": "設定",
+    "admin": "管理員",
+    "analytics": "分析"
+  },
+  "dashboard": {
+    "title": "今日熱量",
+    "remaining": "還可攝取",
+    "over": "已超標",
+    "upload": "拍照上傳分析",
+    "dropzone_hint": "點擊或拖曳圖片上傳",
+    "dropzone_formats": "支援 JPG / PNG / WEBP",
+    "analyzing": "分析中...",
+    "analyze": "AI 分析",
+    "confirm_add": "確認新增",
+    "saved_success": "已儲存至今日飲食記錄",
+    "today_logs": "今日飲食記錄",
+    "view_all": "查看全部",
+    "no_logs": "今天還沒有記錄，試著上傳一張食物照片吧！",
+    "calorie_unit": "kcal"
+  },
+  "analytics": {
+    "title": "7日飲食趨勢",
+    "calories_chart": "每日熱量",
+    "macros_chart": "蛋白質 / 碳水 / 脂肪",
+    "target_line": "熱量目標",
+    "no_data": "近7日尚無資料"
+  },
+  "donation": {
+    "title": "支持 CaloScanAi",
+    "description": "如果這個專案對你有幫助，歡迎用一杯咖啡支持開發者繼續營運與維護。",
+    "support_kofi": "在 Ko-fi 上支持",
+    "support_bmc": "在 Buy Me a Coffee 上支持",
+    "later": "先不用，婉拒了 🙏"
+  }
+}

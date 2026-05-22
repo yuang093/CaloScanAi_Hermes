@@ -1,14 +1,22 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, HTTPException, status
+import logging
+import sys
+import json
+from datetime import date
+from uuid import UUID
+
+from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from datetime import date
 from jose import jwt, JWTError
 
 from .core.config import get_settings
 from .core.database import get_db, engine, Base
+from .core.exceptions import CaloScanException
 from .models.user import User
 from .models.food_log import FoodLog
 from .models.barcode import BarcodeDictionary, DailyQuote
@@ -19,6 +27,39 @@ import base64 as _base64
 from .services.vision import analyze_food_image
 from .services.auth import get_password_hash, verify_password, create_access_token, decode_token
 from .api.backup import router as backup_router
+from .api.feedback import router as feedback_router
+
+
+# ── JSON Logging Setup ─────────────────────────────────────────────────────────
+class JSONFormatter(logging.Formatter):
+    def format(self, record):
+        log_data = {
+            "timestamp": self.formatTime(record),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+        if record.exc_info:
+            log_data["exc_info"] = self.formatException(record.exc_info)
+        return json.dumps(log_data)
+
+
+def setup_logging():
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(JSONFormatter())
+    root_logger.addHandler(handler)
+    
+    # Set httpx logging to WARNING to reduce noise
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+
+
+setup_logging()
+logger = logging.getLogger(__name__)
+
 
 settings = get_settings()
 security = HTTPBearer()
@@ -37,6 +78,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CaloScanAi API", version="1.0.0", lifespan=lifespan)
 
 app.include_router(backup_router)
+app.include_router(feedback_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,6 +87,47 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ── Exception Handlers ─────────────────────────────────────────────────────────
+@app.exception_handler(CaloScanException)
+async def caloscan_exception_handler(request: Request, exc: CaloScanException):
+    logger.error(f"CaloScanException: {exc.detail}", exc_info=True)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail, "error_code": exc.error_code},
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    logger.warning(f"HTTPException {exc.status_code}: {exc.detail}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail, "error_code": "HTTP_ERROR"},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.warning(f"RequestValidationError: {exc.errors()}")
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": "請求格式驗證失敗",
+            "error_code": "VALIDATION_ERROR",
+            "errors": exc.errors(),
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "伺服器內部錯誤", "error_code": "INTERNAL_ERROR"},
+    )
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -143,12 +226,16 @@ async def create_food_log(
         user_id=current_user.id,
         food_name=data.food_name,
         calories=data.calories,
+        protein_g=data.protein_g,
+        carbs_g=data.carbs_g,
+        fat_g=data.fat_g,
         source=data.source,
         log_date=data.log_date or date.today(),
     )
     db.add(log)
     await db.commit()
     await db.refresh(log)
+    logger.info(f"FoodLog created: user={current_user.id}, food={data.food_name}, calories={data.calories}")
     return FoodLogResponse.model_validate(log)
 
 
@@ -176,11 +263,32 @@ async def get_daily_summary(
 # ── Barcode Routes ────────────────────────────────────────────────────────────
 @app.get("/api/barcode/{barcode}")
 async def lookup_barcode(barcode: str, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(BarcodeDictionary).where(BarcodeDictionary.barcode == barcode))
-    item = result.scalar_one_or_none()
-    if not item:
-        raise HTTPException(status_code=404, detail="找不到這個條碼")
-    return {"barcode": item.barcode, "food_name": item.food_name, "calories": item.calories, "category": item.category}
+    """
+    條碼查詢：
+    1. 先查本地 BarcodeDictionary
+    2. 找不到則自動查 OpenFoodFacts API
+    3. 將查到的結果寫入本地 DB（可選快取）
+    """
+    logger.info(f"Barcode lookup: {barcode}")
+    
+    # 使用 barcode service 的整合查詢
+    from .services.barcode import lookup_or_estimate_barcode
+    
+    result = await lookup_or_estimate_barcode(barcode, db)
+    
+    if not result["found"]:
+        logger.warning(f"Barcode not found: {barcode}")
+        return JSONResponse(
+            status_code=404,
+            content={
+                "detail": "未找到商品，請手動輸入",
+                "error_code": "BARCODE_NOT_FOUND",
+                "barcode": barcode,
+            },
+        )
+    
+    logger.info(f"Barcode found via {result.get('source')}: {result['food_name']}")
+    return result
 
 
 # ── Daily Quote Route ─────────────────────────────────────────────────────────

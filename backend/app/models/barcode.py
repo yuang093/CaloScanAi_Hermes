@@ -10,7 +10,12 @@ class BarcodeDictionary(Base):
 
     barcode: Mapped[str] = mapped_column(String(50), primary_key=True)
     food_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    brand: Mapped[str | None] = mapped_column(String(100), nullable=True)
     calories: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    protein_g: Mapped[float] = mapped_column(default=0.0)
+    carbs_g: Mapped[float] = mapped_column(default=0.0)
+    fat_g: Mapped[float] = mapped_column(default=0.0)
+    serving_size_g: Mapped[int] = mapped_column(default=100)
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 

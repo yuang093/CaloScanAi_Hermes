@@ -1,0 +1,26 @@
+{
+  "name": "CaloScanAi",
+  "short_name": "CaloScanAi",
+  "description": "AI 每日卡路里追蹤 — 拍照上傳，智慧分析飲食",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "health", "lifestyle"],
+  "lang": "zh-TW"
+}
