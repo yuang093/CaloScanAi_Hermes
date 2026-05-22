@@ -1,11 +1,14 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+from uuid import UUID
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
+from ..core.database import get_db
 from ..core.config import get_settings
 from ..models.user import User
 
@@ -39,16 +42,21 @@ def decode_token(token: str) -> dict:
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: AsyncSession = Depends(lambda: None),
+    db: AsyncSession = Depends(get_db),
 ) -> User:
     """Dependency to get current authenticated user."""
-    # This is a simplified version - actual implementation needs db dependency
-    token = credentials.credentials
-    payload = decode_token(token)
-    user_id = payload.get("sub")
-    if not user_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="無效的 Token")
-    return user_id
+    try:
+        payload = decode_token(credentials.credentials)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="無效的 Token")
+        result = await db.execute(select(User).where(User.id == UUID(user_id)))
+        user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="使用者不存在")
+        return user
+    except (JWTError, Exception):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 
 async def authenticate_user(db: AsyncSession, username: str, password: str) -> Optional[User]:
