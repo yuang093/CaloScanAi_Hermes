@@ -28,6 +28,9 @@ from .services.vision import analyze_food_image
 from .services.auth import get_password_hash, verify_password, create_access_token, decode_token
 from .api.backup import router as backup_router
 from .api.feedback import router as feedback_router
+from .api.account import router as account_router
+from .api.admin import router as admin_router
+from .api.food_logs import router as food_logs_router
 
 
 # ── JSON Logging Setup ─────────────────────────────────────────────────────────
@@ -79,6 +82,9 @@ app = FastAPI(title="CaloScanAi API", version="1.0.0", lifespan=lifespan)
 
 app.include_router(backup_router)
 app.include_router(feedback_router)
+app.include_router(account_router)
+app.include_router(admin_router)
+app.include_router(food_logs_router)
 
 app.add_middleware(
     CORSMiddleware,

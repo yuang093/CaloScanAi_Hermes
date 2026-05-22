@@ -18,7 +18,7 @@ from ..models.user import User
 from ..schemas.food_log import FoodLogResponse, FoodLogCreate
 from ..services.image_processor import compress_image
 from ..services.vision import analyze_food_image
-from .auth import get_current_user
+from ..services.auth import get_current_user
 
 router = APIRouter(prefix="/api/food-logs", tags=["Food Logs"])
 

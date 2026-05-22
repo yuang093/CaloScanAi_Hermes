@@ -7,7 +7,7 @@ from ..core.database import get_db
 from ..models.user import User, UserRole
 from ..models.feedback import Feedback
 from ..schemas.feedback import FeedbackCreate, FeedbackResponse, FeedbackStats
-from .auth import get_current_user
+from ..services.auth import get_current_user
 
 router = APIRouter(prefix="/api/feedback", tags=["feedback"])
 
