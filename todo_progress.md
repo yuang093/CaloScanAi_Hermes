@@ -34,3 +34,9 @@
 - [x] 實作深色/亮色模式切換 — `frontend/src/styles/theme.css` + `utils/theme.js`。
 - [x] 匯入 365 句鼓勵語錄至資料庫並實作首頁輪播 — `init-db.sql` 已有語錄，`DailyQuote.jsx` 完成。
 - [x] 實作斗內 (Donation) 按鈕 — `DonationButton.jsx`（Ko-fi + Buy Me a Coffee，浮動+內嵌）。
+
+## 階段五：前端頁面（P1-2 / P1-3 / P1-4）
+- [x] P1-2：Dashboard 主頁（熱量進度條 + 今日飲食記錄列表）— `src/app/dashboard/page.tsx`
+- [x] P1-3：拍照上傳分析區（圖片上傳 → POST /api/food-logs/analyze → 顯示結果 → 確認後 POST /api/food-logs）— `src/app/dashboard/page.tsx`
+- [x] P1-4：歷史記錄頁（關鍵字搜尋 + 日期範圍篩選 + 刪除）— `src/app/dashboard/history/page.tsx`
+- [x] 後端 GET /api/food-logs 補強：支援 keyword / start_date / end_date 參數 — `backend/app/api/food_logs.py`

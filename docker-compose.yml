@@ -18,18 +18,18 @@ services:
     networks:
       - caloscan_net
 
-  # caloscan_frontend:
-  #   build: ./frontend
-  #   container_name: caloscan_frontend
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3002:3000"
-  #   environment:
-  #     - NEXT_PUBLIC_API_URL=http://caloscan_backend:8000
-  #   depends_on:
-  #     - caloscan_backend
-  #   networks:
-  #     - caloscan_net
+  caloscan_frontend:
+    build: ./frontend
+    container_name: caloscan_frontend
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://caloscan_backend:8000
+    depends_on:
+      - caloscan_backend
+    networks:
+      - caloscan_net
 
   caloscan_postgres:
     image: postgres:16-alpine

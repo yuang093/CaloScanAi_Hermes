@@ -8,7 +8,7 @@ import httpx
 from fastapi import HTTPException
 
 MINIMAX_API_KEY = os.getenv("MINIMAX_API_KEY")
-MINIMAX_BASE_URL = "https://api.minimax.chat/v1"
+MINIMAX_BASE_URL = "https://api.minimax.io/v1"  # 全球版
 
 
 async def analyze_food_image(image_base64: str) -> dict:

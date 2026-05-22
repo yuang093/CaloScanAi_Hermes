@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CaloScanAi — 任務優先序決策器</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --card-hover: #22263a;
+  --border: #2e3350;
+  --text: #e8eaf0;
+  --text-dim: #8b90a5;
+  --p1: #ef4444;
+  --p1-bg: #2d1515;
+  --p2: #f59e0b;
+  --p2-bg: #2d2510;
+  --p3: #22c55e;
+  --p3-bg: #0f2617;
+  --accent: #818cf8;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.sub {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.col {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 500px;
+}
+
+.col h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.badge-p1 { background: var(--p1); color: #fff; }
+.badge-p2 { background: var(--p2); color: #000; }
+.badge-p3 { background: var(--p3); color: #000; }
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 400px;
+}
+
+.card {
+  background: var(--card-hover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: grab;
+  user-select: none;
+  transition: opacity 0.2s, box-shadow 0.2s;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.card:active { cursor: grabbing; }
+
+.card.dragging {
+  opacity: 0.4;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.card .card-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+
+.card .card-meta {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+}
+
+.card.P1 { border-left: 3px solid var(--p1); background: var(--p1-bg); }
+.card.P2 { border-left: 3px solid var(--p2); background: var(--p2-bg); }
+.card.P3 { border-left: 3px solid var(--p3); background: var(--p3-bg); }
+
+footer {
+  max-width: 1400px;
+  margin: 24px auto 0;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+button {
+  padding: 10px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#btn-submit {
+  background: var(--accent);
+  color: #fff;
+}
+
+#btn-submit:hover { filter: brightness(1.1); }
+
+#btn-copy {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+textarea {
+  width: 100%;
+  max-width: 1400px;
+  margin: 16px auto 0;
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 14px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.hint {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  margin-top: 12px;
+}
+
+.ghost {
+  opacity: 0.3;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗂️ CaloScanAi 任務優先序決策器</h1>
+  <p class="sub">拖曳卡片調整順序 → 按「產生 Prompt」→ 貼給 AI 繼續執行</p>
+</header>
+
+<div class="columns">
+  <!-- 第一優先 -->
+  <div class="col" data-priority="P1">
+    <h2><span class="badge badge-p1">P1</span> 第一優先</h2>
+    <div class="cards" id="cards-P1"></div>
+  </div>
+
+  <!-- 第二優先 -->
+  <div class="col" data-priority="P2">
+    <h2><span class="badge badge-p2">P2</span> 第二優先</h2>
+    <div class="cards" id="cards-P2"></div>
+  </div>
+
+  <!-- 第三優先 -->
+  <div class="col" data-priority="P3">
+    <h2><span class="badge badge-p3">P3</span> 第三優先</h2>
+    <div class="cards" id="cards-P3"></div>
+  </div>
+</div>
+
+<footer>
+  <button id="btn-submit">📋 產生 Prompt</button>
+  <button id="btn-copy">📋 複製 Prompt</button>
+</footer>
+
+<textarea id="output" placeholder="Prompt 將出現在這裡…"></textarea>
+<p class="hint">💡 拖曳改變順序後點「產生 Prompt」，複製後貼回對話</p>
+
+<script>
+const ALL_TASKS = [
+  // P1 任務（已預設 P1，可拖到其他欄）
+  { id: 't01',  priority: 'P1', title: '啟動前端 React 應用（Next.js）', meta: 'docker-compose.yml 取消註解 + 建構 Image' },
+  { id: 't02', priority: 'P1', title: '登入後引導流程（首頁 → 拍照）', meta: '串接 /api/food-logs/analyze API' },
+  { id: 't03', priority: 'P1', title: '每日儀表板（熱量進度條 + 今日摘要）', meta: '串接 /api/food-logs/today + /api/users/me' },
+  { id: 't04', priority: 'P1', title: '食物記錄搜尋與篩選（關鍵字 + 日期範圍）', meta: '擴充 /api/food-logs GET 端點' },
+
+  // P2 任務
+  { id: 't05', priority: 'P2', title: 'Dark / Light 主題整合进 React', meta: 'theme.css + theme.js → Context API' },
+  { id: 't06', priority: 'P2', title: '365 鼓勵語錄輪播整合', meta: 'DailyQuote.jsx → 首頁串接 /api/daily-quote' },
+  { id: 't07', priority: 'P2', title: '條碼掃描功能前端（相機視圖）', meta: '串接 barcode.py + 條碼資料庫' },
+  { id: 't08', priority: 'P2', title: '管理員儀表板（React 版本）', meta: '串接 /api/admin/stats + /api/admin/users' },
+  { id: 't09', priority: 'P2', title: '熱量目標設定 UI', meta: '串接 PUT /api/account/profile + daily_calorie_limit' },
+  { id: 't10', priority: 'P2', title: '會員註冊 / 登入頁面', meta: '串接 /api/auth/register + /api/auth/login' },
+
+  // P3 任務
+  { id: 't11', priority: 'P3', title: '7 日飲食趨勢圖表', meta: 'Chart.js / Recharts 串接歷史資料 API' },
+  { id: 't12', priority: 'P3', title: '自動化備份排程（GitHub Actions cron）', meta: 'workflows/backup.yml → pg_dump → GitHub Release' },
+  { id: 't13', priority: 'P3', title: 'CI/CD 自動化（Push → Docker Hub → Mac Mini pull）', meta: 'GitHub Actions + docker/buildx' },
+  { id: 't14', priority: 'P3', title: '斗內按鈕整合', meta: 'DonationButton.jsx → 串接 React 組件' },
+  { id: 't15', priority: 'P3', title: '錯誤處理與結構化 Logging', meta: 'Python logging → JSON 格式 + Sentry 可選' },
+  { id: 't16', priority: 'P3', title: '條碼掃描優化（字典檔擴充）', meta: 'barcode.py 實作與 OpenFoodFacts API 串接' },
+  { id: 't17', priority: 'P3', title: 'PWA / Mobile Web App 支援', meta: 'manifest.json + Service Worker' },
+  { id: 't18', priority: 'P3', title: '多語系（英文 / 繁體中文切換）', meta: 'i18next-react 整合' },
+  { id: 't19', priority: 'P3', title: 'Input Validation 強化', meta: 'Pydantic model 全面覆蓋所有 API endpoint' },
+  { id: 't20', priority: 'P3', title: '使用者調研問卷系統化（收集回饋）', meta: 'A/B 測試框架或回饋表單 API' },
+];
+
+// ── Drag & Drop ──────────────────────────────────────────────
+let dragged = null;
+
+document.querySelectorAll('.cards').forEach(container => {
+  container.addEventListener('dragover', e => {
+    e.preventDefault();
+    const after = [...container.querySelectorAll('.card:not(.dragging)')]
+      .find(el => e.clientY < el.getBoundingClientRect().top + el.offsetHeight / 2);
+    if (after) container.insertBefore(dragged, after);
+    else container.appendChild(dragged);
+  });
+
+  container.addEventListener('drop', e => e.preventDefault());
+});
+
+function makeDraggable(card) {
+  card.setAttribute('draggable', 'true');
+  card.addEventListener('dragstart', () => {
+    dragged = card;
+    card.classList.add('dragging');
+  });
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    dragged = null;
+    updatePriorities();
+  });
+}
+
+function buildCard(task) {
+  const el = document.createElement('div');
+  el.className = `card ${task.priority}`;
+  el.dataset.id = task.id;
+  el.innerHTML = `
+    <div class="card-title">${task.title}</div>
+    <div class="card-meta">${task.meta}</div>
+  `;
+  makeDraggable(el);
+  return el;
+}
+
+function render() {
+  ALL_TASKS.forEach(t => {
+    const col = document.getElementById(`cards-${t.priority}`);
+    col.appendChild(buildCard(t));
+  });
+}
+
+function updatePriorities() {
+  ['P1','P2','P3'].forEach(p => {
+    document.querySelectorAll(`#cards-${p} .card`).forEach((card, i) => {
+      const task = ALL_TASKS.find(t => t.id === card.dataset.id);
+      task._order = i;
+    });
+  });
+}
+
+render();
+
+// ── Prompt Generation ─────────────────────────────────────────
+document.getElementById('btn-submit').addEventListener('click', () => {
+  updatePriorities();
+
+  const lines = ['# CaloScanAi 任務執行順序（已由使用者調整）', ''];
+
+  ['P1','P2','P3'].forEach(p => {
+    const tasks = ALL_TASKS
+      .filter(t => t.priority === p)
+      .sort((a, b) => (a._order ?? 0) - (b._order ?? 0));
+
+    lines.push(`## ${p === 'P1' ? '🔴 第一優先' : p === 'P2' ? '🟡 第二優先' : '🟢 第三優先'}`);
+    tasks.forEach((t, i) => {
+      lines.push(`${i+1}. **${t.title}**`);
+      lines.push(`   - ${t.meta}`);
+    });
+    lines.push('');
+  });
+
+  lines.push('---');
+  lines.push('請根據以上順序執行，結束後報告完成狀態。');
+
+  document.getElementById('output').value = lines.join('\n');
+});
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  const ta = document.getElementById('output');
+  if (!ta.value) {
+    document.getElementById('btn-submit').click();
+  }
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✅ 已複製';
+    setTimeout(() => btn.textContent = '📋 複製 Prompt', 1500);
+  });
+});
+</script>
+</body>
+</html>

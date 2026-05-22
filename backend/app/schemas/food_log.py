@@ -16,6 +16,9 @@ class FoodLogResponse(BaseModel):
     image_url: str | None
     food_name: str
     calories: int
+    protein_g: float = 0.0
+    carbs_g: float = 0.0
+    fat_g: float = 0.0
     source: str
     log_date: date
     created_at: datetime

@@ -2,11 +2,12 @@
 CaloScanAi — Food Log API Routes
 """
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 from uuid import UUID
 from datetime import datetime
+from typing import Optional
 import os
 import uuid
 import base64
@@ -90,12 +91,18 @@ async def analyze_image(
 
 @router.get("", response_model=list[FoodLogResponse])
 async def list_food_logs(
-    date: str = None,  # YYYY-MM-DD
+    date: Optional[str] = Query(None),
+    keyword: Optional[str] = Query(None),
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    取得当前用户的所有饮食记录，可按日期篩選。
+    取得当前用户的所有饮食记录，支持多种过滤条件：
+    - date: YYYY-MM-DD，精确匹配某一天
+    - start_date / end_date: YYYY-MM-DD 范围筛选
+    - keyword: 模糊匹配食物名称（前端过滤）
     """
     query = select(FoodLog).where(FoodLog.user_id == current_user.id)
 
@@ -112,9 +119,31 @@ async def list_food_logs(
         except ValueError:
             raise HTTPException(status_code=400, detail="日期格式錯誤，請使用 YYYY-MM-DD")
 
+    if start_date:
+        try:
+            start = datetime.strptime(start_date, "%Y-%m-%d").date()
+            query = query.where(FoodLog.created_at >= start)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="起始日期格式錯誤，請使用 YYYY-MM-DD")
+
+    if end_date:
+        try:
+            end = datetime.strptime(end_date, "%Y-%m-%d").date()
+            # 取 end_date 當天的最後一刻
+            end_next = end.replace(day=end.day + 1) if end.month < 12 else end.replace(year=end.year + 1, month=1, day=1)
+            query = query.where(FoodLog.created_at < end_next)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="結束日期格式錯誤，請使用 YYYY-MM-DD")
+
     query = query.order_by(FoodLog.created_at.desc())
     result = await db.execute(query)
-    return result.scalars().all()
+    all_logs = result.scalars().all()
+
+    # 前端 keyword 过滤（Case-insensitive）
+    if keyword:
+        all_logs = [log for log in all_logs if keyword.lower() in log.food_name.lower()]
+
+    return all_logs
 
 
 @router.get("/today", response_model=list[FoodLogResponse])
