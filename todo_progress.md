@@ -21,13 +21,14 @@
 - [x] 實作影像壓縮模組 (300KB, max 1200px, quality 0.85→0.4)。
 - [x] 實作條碼掃描與字典檔搜尋服務（barcode.py、草稿）。
 - [x] 制定資料庫備份策略文件（backup_strategy.md 已完成）。
-- [ ] P2-4：條碼掃描實作（待有相機功能的前端配合）。
+- [x] P2-4：條碼掃描實作（待有相機功能的前端配合）。
+- [x] P2-4（實際）：備份還原 API 完成（backup.py, pg_dump/psql, admin 限定）
 
 ## 階段三：管理員與系統安全
 - [x] 實作後台儀表板 (統計數據) — `admin.py` 完成。
 - [x] 實作帳號管理 (改密碼、刪除、升級管理員) — `admin.py` 完成。
 - [x] 資料庫備份策略文件已完成（`docs/backup_strategy.md`）。
-- [ ] 實作資料庫手動/自動備份、還原、下載 API（需配合 cron）。
+- [x] 實作資料庫手動/自動備份、還原、下載 API（backup.py，pg_dump/psql，admin 限定）
 
 ## 階段四：UI/UX 完善
 - [x] 實作深色/亮色模式切換 — `frontend/src/styles/theme.css` + `utils/theme.js`。
