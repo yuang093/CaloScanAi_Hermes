@@ -56,9 +56,9 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: caloscan_cloudflared
     restart: unless-stopped
-    command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
-    # Cloudflare Tunnel 只透過 token 連線，不需要 depends_on
-    # 只要在同個 network 就能解析 caloscan_frontend / caloscan_backend
+    command: tunnel --config /etc/cloudflared/cloudflared.yml run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    volumes:
+      - ./cloudflared.yml:/etc/cloudflared/cloudflared.yml:ro
     networks:
       - caloscan_net
 

@@ -179,7 +179,12 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @app.post("/api/auth/login", response_model=TokenResponse)
 async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.username == data.username))
+    #支援 username 或 email 登入
+    result = await db.execute(
+        select(User).where(
+            (User.username == data.username) | (User.email == data.username)
+        )
+    )
     user = result.scalar_one_or_none()
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=401, detail="帳號或密碼錯誤")

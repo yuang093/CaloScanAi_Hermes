@@ -7,7 +7,7 @@ import { apiGet, apiPost } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -51,14 +51,14 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              Email
+              帳號 / Email
             </label>
             <input
-              type="email"
+              type="text"
               className="input"
-              placeholder="your@email.com"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="帳號或 Email"
+              value={form.identifier}
+              onChange={(e) => setForm({ ...form, identifier: e.target.value })}
               required
             />
           </div>

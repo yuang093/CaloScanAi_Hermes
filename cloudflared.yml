@@ -1,0 +1,7 @@
+ingress:
+  - hostname: calo_h.yuang093.cc
+    service: http://caloscan_frontend:3000
+  - hostname: calo_h.yuang093.cc
+    path: /api.*
+    service: http://caloscan_backend:8000
+  - service: http_status:404
