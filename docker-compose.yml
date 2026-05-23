@@ -25,7 +25,7 @@ services:
     ports:
       - "3002:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://caloscan_backend:8000
+      - NEXT_PUBLIC_API_URL=https://calo_h.yuang093.cc
     depends_on:
       - caloscan_backend
     networks:

@@ -42,7 +42,7 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    username: str = Field(..., description="帳號或 Email")
+    identifier: str = Field(..., description="帳號或 Email")
     password: str = Field(..., min_length=1)
 
 

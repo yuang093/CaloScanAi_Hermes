@@ -182,7 +182,7 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     #支援 username 或 email 登入
     result = await db.execute(
         select(User).where(
-            (User.username == data.username) | (User.email == data.username)
+            (User.username == data.identifier) | (User.email == data.identifier)
         )
     )
     user = result.scalar_one_or_none()
