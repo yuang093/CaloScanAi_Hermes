@@ -20,8 +20,9 @@ function LoginV1() {
     setError('');
     setLoading(true);
     try {
-      await apiPost('/api/auth/login', { identifier: form.identifier, password: form.password });
-      router.push('/dashboard');
+      const data = await apiPost<{ access_token: string }>('/api/auth/login', { identifier: form.identifier, password: form.password });
+      document.cookie = `caloscan_token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; secure`;
+      window.location.href = '/dashboard';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '登入失敗');
     } finally {
@@ -40,25 +41,14 @@ function LoginV1() {
       padding: '24px',
     }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500&family=Noto+Serif+TC:wght@300;400;600&display=swap');`}</style>
-      <div style={{
-        display: 'flex',
-        gap: '80px',
-        alignItems: 'center',
-        maxWidth: '1100px',
-        width: '100%',
-      }}>
+      <div style={{ display: 'flex', gap: '80px', alignItems: 'center', maxWidth: '1100px', width: '100%' }}>
         {/* Brand */}
         <div style={{ flex: 1 }}>
           <div style={{
-            width: '72px',
-            height: '72px',
-            borderRadius: '50%',
+            width: '72px', height: '72px', borderRadius: '50%',
             background: 'linear-gradient(135deg, #f8c8d4, #e8a0b0)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '32px',
-            boxShadow: '0 4px 24px rgba(201,125,142,0.25)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: '32px', boxShadow: '0 4px 24px rgba(201,125,142,0.25)',
           }}>
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
               <circle cx="18" cy="18" r="10" stroke="#fff" strokeWidth="2"/>
@@ -67,65 +57,34 @@ function LoginV1() {
             </svg>
           </div>
           <h1 style={{
-            fontFamily: "'Noto Serif TC', serif",
-            fontSize: '48px',
-            fontWeight: 300,
-            letterSpacing: '0.08em',
-            lineHeight: 1.2,
-            marginBottom: '16px',
-            color: '#2d2a26',
+            fontFamily: "'Noto Serif TC', serif", fontSize: '48px', fontWeight: 300,
+            letterSpacing: '0.08em', lineHeight: 1.2, marginBottom: '16px', color: '#2d2a26',
           }}>
             CaloScan<span style={{ color: '#c97d8e' }}>AI</span>
-            <span style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: 400,
-              letterSpacing: '0.3em',
-              color: '#8a8279',
-              marginTop: '8px',
-            }}>C A L O R I E  T R A C K E R</span>
+            <span style={{ display: 'block', fontSize: '14px', fontWeight: 400, letterSpacing: '0.3em', color: '#8a8279', marginTop: '8px' }}>
+              C A L O R I E  T R A C K E R
+            </span>
           </h1>
-          <p style={{
-            fontSize: '15px',
-            color: '#8a8279',
-            lineHeight: 1.8,
-            maxWidth: '320px',
-          }}>
+          <p style={{ fontSize: '15px', color: '#8a8279', lineHeight: 1.8, maxWidth: '320px' }}>
             用 AI 攝影鏡頭，瞬間看懂每一口的熱量。優雅、簡單、每一天。
           </p>
         </div>
 
         {/* Card */}
         <div style={{
-          flex: 1,
-          maxWidth: '420px',
-          background: '#fff',
-          borderRadius: '16px',
-          padding: '48px 44px',
-          boxShadow: '0 8px 40px rgba(45,42,38,0.06)',
-          border: '1px solid #e8e2db',
+          flex: 1, maxWidth: '420px', background: '#fff', borderRadius: '16px',
+          padding: '48px 44px', boxShadow: '0 8px 40px rgba(45,42,38,0.06)', border: '1px solid #e8e2db',
         }}>
-          <div style={{
-            display: 'flex',
-            borderBottom: '1px solid #e8e2db',
-            marginBottom: '36px',
-          }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid #e8e2db', marginBottom: '36px' }}>
             {['登入', '註冊'].map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t as 'login' | 'register')}
                 style={{
-                  flex: 1,
-                  padding: '12px 0',
-                  textAlign: 'center',
-                  fontSize: '14px',
-                  letterSpacing: '0.05em',
-                  color: tab === t ? '#2d2a26' : '#8a8279',
+                  flex: 1, padding: '12px 0', textAlign: 'center', fontSize: '14px',
+                  letterSpacing: '0.05em', color: tab === t ? '#2d2a26' : '#8a8279',
                   borderBottom: tab === t ? '2px solid #c97d8e' : '2px solid transparent',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  background: 'none', border: 'none', cursor: 'pointer', transition: 'all 0.2s',
                   fontFamily: 'inherit',
                 }}
               >
@@ -137,14 +96,16 @@ function LoginV1() {
           {tab === 'login' ? (
             <>
               {error && (
-                <div style={{ padding: '12px 16px', background: '#f3e8ec', color: '#c97d8e', borderRadius: '10px', marginBottom: '16px', fontSize: '14px' }}>{error}</div>
+                <div style={{ padding: '12px 16px', background: '#f3e8ec', color: '#c97d8e', borderRadius: '10px', marginBottom: '16px', fontSize: '14px' }}>
+                  {error}
+                </div>
               )}
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', letterSpacing: '0.15em', color: '#8a8279', marginBottom: '8px', textTransform: 'uppercase' }}>帳號 / Email</label>
+                  <label style={{ display: 'block', fontSize: '12px', letterSpacing: '0.15em', color: '#8a8279', marginBottom: '8px', textTransform: 'uppercase' }}>帳號</label>
                   <input
                     type="text"
-                    placeholder="your@email.com"
+                    placeholder="輸入帳號"
                     value={form.identifier}
                     onChange={(e) => setForm({ ...form, identifier: e.target.value })}
                     required
@@ -170,19 +131,11 @@ function LoginV1() {
                   type="submit"
                   disabled={loading}
                   style={{
-                    width: '100%',
-                    padding: '16px',
+                    width: '100%', padding: '16px',
                     background: loading ? '#e8a0b0' : 'linear-gradient(135deg, #d4899c, #c97d8e)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontSize: '15px',
-                    fontFamily: 'inherit',
-                    letterSpacing: '0.1em',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    marginTop: '8px',
-                    boxShadow: '0 4px 16px rgba(201,125,142,0.3)',
-                    transition: 'all 0.2s',
+                    color: 'white', border: 'none', borderRadius: '10px', fontSize: '15px',
+                    fontFamily: 'inherit', letterSpacing: '0.1em', cursor: loading ? 'not-allowed' : 'pointer',
+                    marginTop: '8px', boxShadow: '0 4px 16px rgba(201,125,142,0.3)', transition: 'all 0.2s',
                   }}
                 >
                   {loading ? '登入中...' : '登 入'}
@@ -215,8 +168,9 @@ function LoginV3() {
     setError('');
     setLoading(true);
     try {
-      await apiPost('/api/auth/login', { identifier: form.identifier, password: form.password });
-      router.push('/dashboard');
+      const data = await apiPost<{ access_token: string }>('/api/auth/login', { identifier: form.identifier, password: form.password });
+      document.cookie = `caloscan_token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; secure`;
+      window.location.href = '/dashboard';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '登入失敗');
     } finally {
@@ -226,51 +180,30 @@ function LoginV3() {
 
   return (
     <div style={{
-      minHeight: '100vh',
-      background: '#f4efe8',
+      minHeight: '100vh', background: '#f4efe8',
       fontFamily: "'Source Sans 3', 'Noto Sans TC', sans-serif",
-      display: 'grid',
-      gridTemplateColumns: '1fr 420px',
+      display: 'grid', gridTemplateColumns: '1fr 420px',
     }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&family=Noto+Sans+TC:wght@300;400&display=swap');`}</style>
 
       {/* Hero */}
       <div style={{ padding: '80px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
         <div style={{
-          position: 'fixed',
-          top: '40px',
-          left: '40px',
-          fontSize: '9px',
-          letterSpacing: '0.4em',
-          color: '#6b6560',
-          textTransform: 'uppercase',
-          writingMode: 'vertical-rl',
-        }}>CaloScanAi / 飲食追蹤系統</div>
-
+          position: 'fixed', top: '40px', left: '40px', fontSize: '9px',
+          letterSpacing: '0.4em', color: '#6b6560', textTransform: 'uppercase', writingMode: 'vertical-rl',
+        }}>
+          CaloScanAi / 飲食追蹤系統
+        </div>
         <div style={{ fontStyle: 'italic', fontSize: '14px', color: '#c45c3a', marginBottom: '24px', letterSpacing: '0.05em', fontFamily: "'Playfair Display', serif" }}>
           AI Calorie Tracker · Since 2026
         </div>
-        <h1 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: '72px',
-          fontWeight: 400,
-          lineHeight: 1.1,
-          marginBottom: '32px',
-          color: '#1c1917',
-        }}>
+        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '72px', fontWeight: 400, lineHeight: 1.1, marginBottom: '32px', color: '#1c1917' }}>
           每一口<br />都值得<em style={{ fontStyle: 'italic', color: '#c45c3a' }}>被看見</em>
         </h1>
         <p style={{ fontSize: '16px', lineHeight: 1.9, color: '#6b6560', maxWidth: '420px', fontWeight: 300 }}>
           用相機記錄飲食，AI 即時分析熱量。從今天開始，用數據理解自己的身體。
         </p>
-
-        <div style={{
-          marginTop: 'auto',
-          paddingTop: '48px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '32px',
-        }}>
+        <div style={{ marginTop: 'auto', paddingTop: '48px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
           {[['365', '每日鼓勵語錄'], ['< 2s', 'AI 熱量分析'], ['100%', '本地隱私保護']].map(([num, label]) => (
             <div key={label} style={{ borderTop: '1px solid #ddd6ce', paddingTop: '16px' }}>
               <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '40px', fontWeight: 600, color: '#1c1917' }}>{num}</div>
@@ -288,15 +221,17 @@ function LoginV3() {
         </p>
 
         {error && (
-          <div style={{ padding: '12px 14px', background: '#e8d5cc', color: '#c45c3a', borderRadius: '2px', marginBottom: '20px', fontSize: '14px', borderLeft: '3px solid #c45c3a' }}>{error}</div>
+          <div style={{ padding: '12px 14px', background: '#e8d5cc', color: '#c45c3a', borderRadius: '2px', marginBottom: '20px', fontSize: '14px', borderLeft: '3px solid #c45c3a' }}>
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#6b6560', marginBottom: '8px', textTransform: 'uppercase' }}>電子郵件</label>
+            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#6b6560', marginBottom: '8px', textTransform: 'uppercase' }}>帳號</label>
             <input
               type="text"
-              placeholder="your@email.com"
+              placeholder="輸入帳號"
               value={form.identifier}
               onChange={(e) => setForm({ ...form, identifier: e.target.value })}
               required
@@ -322,20 +257,10 @@ function LoginV3() {
             type="submit"
             disabled={loading}
             style={{
-              width: '100%',
-              padding: '16px',
-              background: '#1c1917',
-              color: '#f4efe8',
-              border: 'none',
-              fontSize: '13px',
-              fontWeight: 600,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              marginTop: '8px',
-              borderRadius: '2px',
-              transition: 'background 0.2s',
-              fontFamily: 'inherit',
+              width: '100%', padding: '16px', background: '#1c1917', color: '#f4efe8', border: 'none',
+              fontSize: '13px', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase',
+              cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px', borderRadius: '2px',
+              transition: 'background 0.2s', fontFamily: 'inherit',
             }}
             onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = '#c45c3a'; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = '#1c1917'; }}
@@ -343,10 +268,6 @@ function LoginV3() {
             {loading ? '登入中...' : '登 入'}
           </button>
         </form>
-
-        <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '13px', color: '#6b6560' }}>
-          <Link href="/register" style={{ color: '#c45c3a', textDecoration: 'none' }}>忘記密碼？</Link>
-        </p>
       </div>
     </div>
   );
@@ -364,8 +285,9 @@ function LoginV5() {
     setError('');
     setLoading(true);
     try {
-      await apiPost('/api/auth/login', { identifier: form.identifier, password: form.password });
-      router.push('/dashboard');
+      const data = await apiPost<{ access_token: string }>('/api/auth/login', { identifier: form.identifier, password: form.password });
+      document.cookie = `caloscan_token=${data.access_token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; secure`;
+      window.location.href = '/dashboard';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '登入失敗');
     } finally {
@@ -375,23 +297,15 @@ function LoginV5() {
 
   return (
     <div style={{
-      minHeight: '100vh',
-      background: '#fef9f3',
+      minHeight: '100vh', background: '#fef9f3',
       fontFamily: "'Nunito', 'Noto Sans TC', sans-serif",
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px',
     }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');`}</style>
 
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        maxWidth: '900px',
-        width: '100%',
-        border: '3px solid #1a1208',
-        boxShadow: '4px 4px 0px #1a1208',
+        display: 'grid', gridTemplateColumns: '1fr 1fr', maxWidth: '900px', width: '100%',
+        border: '3px solid #1a1208', boxShadow: '4px 4px 0px #1a1208',
       }}>
         {/* Left Promo */}
         <div style={{ padding: '56px 48px', background: '#ff6b35', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -422,15 +336,17 @@ function LoginV5() {
           </p>
 
           {error && (
-            <div style={{ padding: '12px 14px', background: '#fef9f3', color: '#ff6b35', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', border: '2px solid #ff6b35' }}>{error}</div>
+            <div style={{ padding: '12px 14px', background: '#fef9f3', color: '#ff6b35', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', border: '2px solid #ff6b35' }}>
+              {error}
+            </div>
           )}
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>Email</label>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>帳號</label>
               <input
                 type="text"
-                placeholder="your@email.com"
+                placeholder="輸入帳號"
                 value={form.identifier}
                 onChange={(e) => setForm({ ...form, identifier: e.target.value })}
                 required
@@ -443,7 +359,7 @@ function LoginV5() {
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>密碼</label>
               <input
                 type="password"
-                placeholder="設定密碼"
+                placeholder="輸入密碼"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
@@ -456,19 +372,10 @@ function LoginV5() {
               type="submit"
               disabled={loading}
               style={{
-                width: '100%',
-                padding: '16px',
-                background: '#1a1208',
-                color: 'white',
-                border: '2px solid #1a1208',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: 900,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                marginTop: '8px',
-                transition: 'all 0.15s',
-                letterSpacing: '0.02em',
-                fontFamily: 'inherit',
+                width: '100%', padding: '16px', background: '#1a1208', color: 'white',
+                border: '2px solid #1a1208', borderRadius: '8px', fontSize: '16px', fontWeight: 900,
+                cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px',
+                transition: 'all 0.15s', letterSpacing: '0.02em', fontFamily: 'inherit',
               }}
               onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = '#ff6b35'; e.currentTarget.style.borderColor = '#ff6b35'; e.currentTarget.style.transform = 'translate(-2px, -2px)'; e.currentTarget.style.boxShadow = '6px 6px 0px #1a1208'; }}}
               onMouseLeave={(e) => { e.currentTarget.style.background = '#1a1208'; e.currentTarget.style.borderColor = '#1a1208'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '4px 4px 0px #1a1208'; }}
@@ -476,10 +383,6 @@ function LoginV5() {
               {loading ? '登入中...' : '登 入'}
             </button>
           </form>
-
-          <p style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'rgba(26,18,8,0.5)' }}>
-            <Link href="/register" style={{ color: '#ff6b35', fontWeight: 700, textDecoration: 'none' }}>忘記密碼？</Link>
-          </p>
         </div>
       </div>
     </div>

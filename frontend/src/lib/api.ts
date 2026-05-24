@@ -4,7 +4,30 @@
  * 自動附加 JWT cookie、解析回應、拋出錯誤。
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE =
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? '' // Browser: relative path (同源，cloudflared 轉發 /api/* 到後端)
+    : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+const TOKEN_KEY = 'caloscan_access_token';
+
+// ── Token helpers ──────────────────────────────────────────────────────────
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(TOKEN_KEY, token);
+  }
+}
+
+export function clearToken(): void {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+}
 
 /**
  * 解析回應為 JSON，錯誤時拋出具體訊息
@@ -51,15 +74,26 @@ export async function apiPost<T = unknown>(
   body: unknown,
   options?: RequestInit
 ): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options?.headers as Record<string, string> | undefined),
+  };
+  const token = getToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
   const res = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
+    headers,
     body: JSON.stringify(body),
   });
+
+  // 登入成功時自動儲存 token
+  if (res.ok && path === '/api/auth/login') {
+    const data = await res.clone().json() as { access_token?: string };
+    if (data?.access_token) setToken(data.access_token);
+  }
+
   return parseResponse<T>(res);
 }
 

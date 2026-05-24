@@ -75,7 +75,7 @@ CREATE INDEX IF NOT EXISTS idx_feedbacks_created_at ON feedbacks(created_at);
 -- ── Admin 帳號（密碼：之後修改）────────────────────────────────────────────────
 INSERT INTO users (username, email, password_hash, role, daily_calorie_limit)
 VALUES ('admin', 'admin@caloscan.local',
-        '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYfQ4Yt6C3q',
+'\$2b\$12\$YWAScttmhisDGg5/ghqX8umOW.FN3eDRsq9WJ7pcXE4cOt6/XgpdG',
         'admin', 2000)
 ON CONFLICT (username) DO NOTHING;
 

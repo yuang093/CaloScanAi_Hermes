@@ -4,7 +4,7 @@ CaloScanAi — 普通用戶帳號管理 API
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from ..core.database import get_db
 from ..models.user import User
@@ -21,7 +21,6 @@ class ChangePasswordRequest(BaseModel):
 
 
 class UpdateProfileRequest(BaseModel):
-    email: EmailStr | None = None
     daily_calorie_limit: int | None = None
     preferred_style: str | None = None
 
@@ -34,7 +33,6 @@ async def get_my_profile(current_user: User = Depends(get_current_user)):
     return {
         "id": str(current_user.id),
         "username": current_user.username,
-        "email": current_user.email,
         "role": current_user.role,
         "preferred_style": current_user.preferred_style,
         "daily_calorie_limit": current_user.daily_calorie_limit,
@@ -53,7 +51,7 @@ async def change_password(
     if not verify_password(data.old_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail="舊密碼輸入錯誤")
 
-    # 新密碼起碼驗證
+    # 新密碼長度驗證
     if len(data.new_password) < 8:
         raise HTTPException(status_code=400, detail="新密碼至少需要 8 個字元")
 
@@ -71,18 +69,7 @@ async def update_profile(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """更新個人資料（Email、每日熱量限制）。"""
-    if data.email is not None:
-        # 檢查 Email 是否已被其他帳號使用
-        from sqlalchemy import select
-        existing = await db.execute(
-            select(User).where(User.email == data.email, User.id != current_user.id)
-        )
-        if existing.scalar_one_or_none():
-            raise HTTPException(status_code=409, detail="此 Email 已被其他帳號使用")
-
-        current_user.email = data.email
-
+    """更新個人資料（每日熱量限制、主題偏好）。"""
     if data.daily_calorie_limit is not None:
         if not isinstance(data.daily_calorie_limit, int) or \
            data.daily_calorie_limit < 500 or data.daily_calorie_limit > 10000:
@@ -100,7 +87,6 @@ async def update_profile(
 
     return {
         "message": "個人資料更新成功",
-        "email": current_user.email,
         "preferred_style": current_user.preferred_style,
         "daily_calorie_limit": current_user.daily_calorie_limit,
     }

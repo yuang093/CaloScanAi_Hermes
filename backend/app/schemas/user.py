@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from uuid import UUID
 import re
@@ -8,13 +8,12 @@ class UserCreate(BaseModel):
     username: str = Field(
         ..., 
         min_length=3, 
-        max_length=30, 
+        max_length=30,
         description="使用者名稱（3-30字）"
     )
-    email: EmailStr = Field(..., description="電子郵件")
     password: str = Field(
-        ..., 
-        min_length=8, 
+        ...,
+        min_length=8,
         max_length=128,
         description="密碼（最少8字）"
     )
@@ -42,14 +41,13 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    identifier: str = Field(..., description="帳號或 Email")
+    identifier: str = Field(..., description="帳號")
     password: str = Field(..., min_length=1)
 
 
 class UserResponse(BaseModel):
     id: UUID
     username: str
-    email: str
     role: str
     daily_calorie_limit: int
     created_at: datetime

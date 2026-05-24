@@ -13,10 +13,10 @@ const AUTH_PATHS = ['/login', '/register'];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 讀取 auth_token cookie
-  const token = request.cookies.get('auth_token')?.value;
+  // 讀取 caloscan_token cookie（登入時前端寫入）
+  const token = request.cookies.get('caloscan_token')?.value;
 
-  // 1. 已登入但訪問 auth 頁面 → 跳回首頁或 dashboard
+  // 1. 已登入但訪問 auth 頁面 → 跳回首頁
   if (AUTH_PATHS.some((p) => pathname.startsWith(p))) {
     if (token) {
       return NextResponse.redirect(new URL('/', request.url));
@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 3. 訪問 admin 路徑但無 token → 跳回登入（admin 頁面自己會驗證 role）
+  // 3. 訪問 admin 路徑但無 token → 跳回登入
   if (ADMIN_PATHS.some((p) => pathname.startsWith(p))) {
     if (!token) {
       const loginUrl = new URL('/login', request.url);
@@ -47,13 +47,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * 匹配所有路徑除了：
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

@@ -153,16 +153,19 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 # ── Auth Routes ───────────────────────────────────────────────────────────────
 @app.post("/api/auth/register", response_model=TokenResponse)
 async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
-    # Check duplicate
+    # Check duplicate username
     existing = await db.execute(
-        select(User).where((User.username == data.username) | (User.email == data.email))
+        select(User).where(User.username == data.username)
     )
     if existing.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="帳號或 Email 已經存在")
+        raise HTTPException(status_code=400, detail="帳號已經存在")
+
+    # 設定預設 email（username@localhost）
+    default_email = f"{data.username}@localhost"
 
     user = User(
         username=data.username,
-        email=data.email,
+        email=default_email,
         password_hash=get_password_hash(data.password),
         daily_calorie_limit=data.daily_calorie_limit,
     )

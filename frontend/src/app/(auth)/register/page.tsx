@@ -10,7 +10,7 @@ import StylePicker from '@/components/StylePicker';
 // ─── V1: Sakura Minimal ────────────────────────────────────────────────────
 function RegisterV1() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({ name: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<'login' | 'register'>('register');
@@ -22,7 +22,7 @@ function RegisterV1() {
     setError('');
     setLoading(true);
     try {
-      await apiPost('/api/auth/register', { username: form.name, email: form.email, password: form.password, daily_calorie_limit: 2000 });
+      await apiPost('/api/auth/register', { username: form.name, password: form.password, daily_calorie_limit: 2000 });
       router.push('/dashboard');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '註冊失敗');
@@ -73,19 +73,15 @@ function RegisterV1() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', letterSpacing: '0.15em', color: '#8a8279', marginBottom: '8px', textTransform: 'uppercase' }}>使用者名稱</label>
-                  <input type="text" placeholder="使用者名稱" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', letterSpacing: '0.15em', color: '#8a8279', marginBottom: '8px', textTransform: 'uppercase' }}>電子郵件</label>
-                  <input type="email" placeholder="your@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
+                  <input type="text" placeholder="設定使用者名稱" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', letterSpacing: '0.15em', color: '#8a8279', marginBottom: '8px', textTransform: 'uppercase' }}>密碼</label>
-                  <input type="password" placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
+                  <input type="password" placeholder="設定密碼（至少8字）" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', letterSpacing: '0.15em', color: '#8a8279', marginBottom: '8px', textTransform: 'uppercase' }}>確認密碼</label>
-                  <input type="password" placeholder="••••••••" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
+                  <input type="password" placeholder="再次輸入密碼" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} required style={{ width: '100%', padding: '14px 16px', border: '1px solid #e8e2db', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', background: '#faf8f5', color: '#2d2a26', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c97d8e'; e.target.style.boxShadow = '0 0 0 3px #f3e8ec'; }} onBlur={(e) => { e.target.style.borderColor = '#e8e2db'; e.target.style.boxShadow = 'none'; }} />
                 </div>
                 <button type="submit" disabled={loading} style={{ width: '100%', padding: '16px', background: loading ? '#e8a0b0' : 'linear-gradient(135deg, #d4899c, #c97d8e)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '15px', fontFamily: 'inherit', letterSpacing: '0.1em', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '8px', boxShadow: '0 4px 16px rgba(201,125,142,0.3)', transition: 'all 0.2s' }}>
                   {loading ? '註冊中...' : '註 冊'}
@@ -106,7 +102,7 @@ function RegisterV1() {
 // ─── V3: Editorial Warmth ────────────────────────────────────────────────────
 function RegisterV3() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({ name: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -117,7 +113,7 @@ function RegisterV3() {
     setError('');
     setLoading(true);
     try {
-      await apiPost('/api/auth/register', { username: form.name, email: form.email, password: form.password, daily_calorie_limit: 2000 });
+      await apiPost('/api/auth/register', { username: form.name, password: form.password, daily_calorie_limit: 2000 });
       router.push('/dashboard');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '註冊失敗');
@@ -154,15 +150,11 @@ function RegisterV3() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#6b6560', marginBottom: '8px', textTransform: 'uppercase' }}>使用者名稱</label>
-            <input type="text" placeholder="使用者名稱" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd6ce', background: '#f4efe8', color: '#1c1917', fontSize: '15px', fontFamily: 'inherit', outline: 'none', borderRadius: '2px', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c45c3a'; }} onBlur={(e) => { e.target.style.borderColor = '#ddd6ce'; }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#6b6560', marginBottom: '8px', textTransform: 'uppercase' }}>電子郵件</label>
-            <input type="email" placeholder="your@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd6ce', background: '#f4efe8', color: '#1c1917', fontSize: '15px', fontFamily: 'inherit', outline: 'none', borderRadius: '2px', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c45c3a'; }} onBlur={(e) => { e.target.style.borderColor = '#ddd6ce'; }} />
+            <input type="text" placeholder="設定使用者名稱" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd6ce', background: '#f4efe8', color: '#1c1917', fontSize: '15px', fontFamily: 'inherit', outline: 'none', borderRadius: '2px', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c45c3a'; }} onBlur={(e) => { e.target.style.borderColor = '#ddd6ce'; }} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#6b6560', marginBottom: '8px', textTransform: 'uppercase' }}>密碼</label>
-            <input type="password" placeholder="設定密碼" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd6ce', background: '#f4efe8', color: '#1c1917', fontSize: '15px', fontFamily: 'inherit', outline: 'none', borderRadius: '2px', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c45c3a'; }} onBlur={(e) => { e.target.style.borderColor = '#ddd6ce'; }} />
+            <input type="password" placeholder="設定密碼（至少8字）" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd6ce', background: '#f4efe8', color: '#1c1917', fontSize: '15px', fontFamily: 'inherit', outline: 'none', borderRadius: '2px', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={(e) => { e.target.style.borderColor = '#c45c3a'; }} onBlur={(e) => { e.target.style.borderColor = '#ddd6ce'; }} />
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '11px', letterSpacing: '0.15em', color: '#6b6560', marginBottom: '8px', textTransform: 'uppercase' }}>確認密碼</label>
@@ -180,7 +172,7 @@ function RegisterV3() {
 // ─── V5: Neo-Brutalist Playful ──────────────────────────────────────────────
 function RegisterV5() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({ name: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -191,7 +183,7 @@ function RegisterV5() {
     setError('');
     setLoading(true);
     try {
-      await apiPost('/api/auth/register', { username: form.name, email: form.email, password: form.password, daily_calorie_limit: 2000 });
+      await apiPost('/api/auth/register', { username: form.name, password: form.password, daily_calorie_limit: 2000 });
       router.push('/dashboard');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '註冊失敗');
@@ -232,15 +224,11 @@ function RegisterV5() {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>使用者名稱</label>
-              <input type="text" placeholder="使用者名稱" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '2px solid #1a1208', borderRadius: '8px', fontSize: '15px', fontFamily: 'inherit', background: '#fef9f3', color: '#1a1208', outline: 'none', boxSizing: 'border-box', boxShadow: '4px 4px 0px #1a1208' }} onFocus={(e) => { e.target.style.boxShadow = '6px 6px 0px #1a1208'; e.target.style.transform = 'translate(-2px, -2px)'; }} onBlur={(e) => { e.target.style.boxShadow = '4px 4px 0px #1a1208'; e.target.style.transform = 'none'; }} />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>Email</label>
-              <input type="email" placeholder="your@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '2px solid #1a1208', borderRadius: '8px', fontSize: '15px', fontFamily: 'inherit', background: '#fef9f3', color: '#1a1208', outline: 'none', boxSizing: 'border-box', boxShadow: '4px 4px 0px #1a1208' }} onFocus={(e) => { e.target.style.boxShadow = '6px 6px 0px #1a1208'; e.target.style.transform = 'translate(-2px, -2px)'; }} onBlur={(e) => { e.target.style.boxShadow = '4px 4px 0px #1a1208'; e.target.style.transform = 'none'; }} />
+              <input type="text" placeholder="設定使用者名稱" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '2px solid #1a1208', borderRadius: '8px', fontSize: '15px', fontFamily: 'inherit', background: '#fef9f3', color: '#1a1208', outline: 'none', boxSizing: 'border-box', boxShadow: '4px 4px 0px #1a1208' }} onFocus={(e) => { e.target.style.boxShadow = '6px 6px 0px #1a1208'; e.target.style.transform = 'translate(-2px, -2px)'; }} onBlur={(e) => { e.target.style.boxShadow = '4px 4px 0px #1a1208'; e.target.style.transform = 'none'; }} />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>密碼</label>
-              <input type="password" placeholder="設定密碼" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '2px solid #1a1208', borderRadius: '8px', fontSize: '15px', fontFamily: 'inherit', background: '#fef9f3', color: '#1a1208', outline: 'none', boxSizing: 'border-box', boxShadow: '4px 4px 0px #1a1208' }} onFocus={(e) => { e.target.style.boxShadow = '6px 6px 0px #1a1208'; e.target.style.transform = 'translate(-2px, -2px)'; }} onBlur={(e) => { e.target.style.boxShadow = '4px 4px 0px #1a1208'; e.target.style.transform = 'none'; }} />
+              <input type="password" placeholder="設定密碼（至少8字）" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required style={{ width: '100%', padding: '12px 14px', border: '2px solid #1a1208', borderRadius: '8px', fontSize: '15px', fontFamily: 'inherit', background: '#fef9f3', color: '#1a1208', outline: 'none', boxSizing: 'border-box', boxShadow: '4px 4px 0px #1a1208' }} onFocus={(e) => { e.target.style.boxShadow = '6px 6px 0px #1a1208'; e.target.style.transform = 'translate(-2px, -2px)'; }} onBlur={(e) => { e.target.style.boxShadow = '4px 4px 0px #1a1208'; e.target.style.transform = 'none'; }} />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '6px', textTransform: 'uppercase', color: '#1a1208' }}>確認密碼</label>

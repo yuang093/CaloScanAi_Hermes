@@ -27,3 +27,5 @@ coverage/
 uploads/
 temp/
 *.log
+# Docker volumes (database data - do not track)
+volumes/
