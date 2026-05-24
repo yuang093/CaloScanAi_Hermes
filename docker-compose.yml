@@ -6,7 +6,7 @@ services:
     ports:
       - "8002:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://caloscan:caloscan_secure_pass@caloscan_postgres:5432/caloscan
+      - DATABASE_URL=postgresql+asyncpg://caloscan:${POSTGRES_PASSWORD}@caloscan_postgres:5432/caloscan
       - SECRET_KEY=${SECRET_KEY}
       - MINIMAX_API_KEY=${MINIMAX_API_KEY}
       - UPLOAD_DIR=/app/uploads
@@ -19,7 +19,10 @@ services:
       - caloscan_net
 
   caloscan_frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://calo_h.yuang093.cc}
     container_name: caloscan_frontend
     restart: unless-stopped
     ports:
@@ -37,7 +40,7 @@ services:
     restart: unless-stopped
     environment:
       - POSTGRES_USER=caloscan
-      - POSTGRES_PASSWORD=caloscan_secure_pass
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=caloscan
     volumes:
       - ./volumes/pg_data:/var/lib/postgresql/data
@@ -56,7 +59,9 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: caloscan_cloudflared
     restart: unless-stopped
-    command: tunnel --config /etc/cloudflared/cloudflared.yml run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file:
+      - .env
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     volumes:
       - ./cloudflared.yml:/etc/cloudflared/cloudflared.yml:ro
     networks:

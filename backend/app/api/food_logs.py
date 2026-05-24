@@ -62,6 +62,7 @@ async def create_food_log(
         carbs_g=carbs_g,
         fat_g=fat_g,
         image_path=filename,
+        image_url=f"/uploads/{filename}",
     )
     db.add(food_log)
     await db.commit()

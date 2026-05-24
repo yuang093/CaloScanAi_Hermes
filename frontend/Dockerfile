@@ -17,6 +17,10 @@ COPY . .
 # Next.js collects completely anonymous telemetry data
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build-time environment variables for Next.js
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 RUN npm run build
 
 # Production image

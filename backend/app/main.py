@@ -7,6 +7,7 @@ from uuid import UUID
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -78,7 +79,10 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
-app = FastAPI(title="CaloScanAi API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="CaloScanAi API", version="1.1.0", lifespan=lifespan)
+
+# Mount uploads directory for serving food images
+app.mount("/uploads", StaticFiles(directory="/app/uploads"), name="uploads")
 
 app.include_router(backup_router)
 app.include_router(feedback_router)
@@ -325,4 +329,4 @@ async def get_daily_quote(db: AsyncSession = Depends(get_db)):
 # ── Health Check ──────────────────────────────────────────────────────────────
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "version": "1.0.0"}
+    return {"status": "ok", "version": "1.1.0"}

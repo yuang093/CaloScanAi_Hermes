@@ -5,7 +5,10 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     # Database
-    database_url: str = "postgresql+asyncpg://caloscan:caloscan_secure_pass@caloscan_postgres:5432/caloscan"
+    database_url: str = os.getenv(
+    "DATABASE_URL",
+    "postgresql+asyncpg://caloscan:caloscan_secure_pass@caloscan_postgres:5432/caloscan"
+)
 
     # JWT
     secret_key: str = os.getenv("SECRET_KEY", "change-me-in-production")

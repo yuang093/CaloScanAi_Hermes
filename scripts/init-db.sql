@@ -72,10 +72,10 @@ CREATE TABLE IF NOT EXISTS feedbacks (
 CREATE INDEX IF NOT EXISTS idx_feedbacks_user_id ON feedbacks(user_id);
 CREATE INDEX IF NOT EXISTS idx_feedbacks_created_at ON feedbacks(created_at);
 
--- ── Admin 帳號（密碼：之後修改）────────────────────────────────────────────────
+-- Admin 帳號（密碼：admin123）
 INSERT INTO users (username, email, password_hash, role, daily_calorie_limit)
 VALUES ('admin', 'admin@caloscan.local',
-'\$2b\$12\$YWAScttmhisDGg5/ghqX8umOW.FN3eDRsq9WJ7pcXE4cOt6/XgpdG',
+        '$2b$12$e53i49/ITx.0NRSvoXIPZeEh24Jkcz2i9SwuR50jJI08Xqe7U6NHW',
         'admin', 2000)
 ON CONFLICT (username) DO NOTHING;
 
